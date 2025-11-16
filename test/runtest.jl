@@ -58,5 +58,14 @@ print("Set:")
 print("BitSet:")
 @btime in($a, $b)
 
+println("--- Set Union ---")
+print("HiBitSet:")
+@btime union!($hb, $hb2)
+print("Set:")
+@btime union!($c, $d)
+print("BitSet:")
+@btime union!($a, $b)
+
+
 #println(intersect!(a,b))
 #println(intersect!(c,d))

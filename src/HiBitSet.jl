@@ -7,5 +7,6 @@ module HiBitSets
 abstract type AbstractHiBitSet end
 
 include("core.jl")
+include("operations.jl")
 
 end # module
