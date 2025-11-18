@@ -17,12 +17,12 @@ jobs:
           version: '1'
 
       - name: Run tests with coverage
-        run: julia --project -e '
+        run: julia --project -e """
           using Pkg;
           Pkg.activate(".");
           Pkg.instantiate();
           Pkg.test(coverage=true);
-        '
+        """
 
       - name: Submit to Coveralls
         uses: coverallsapp/github-action@v2.2.3
