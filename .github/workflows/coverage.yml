@@ -20,6 +20,7 @@ jobs:
         run: |
           julia --project -e 'using Pkg;
             Pkg.activate(".");
+            Pkg.add("Coverage");
             Pkg.instantiate();
             using Test, Coverage;
             Pkg.test(coverage=true);
