@@ -23,6 +23,14 @@ println(intersect!(c, d))
 
 println("--- Intersect ---")
 print("HiBitSet:")
+@btime intersect($hb,$hb2)
+print("Set:")
+@btime intersect($c,$d)
+print("BitSet:")
+@btime intersect($a,$b)
+
+println("--- Intersect in-place ---")
+print("HiBitSet:")
 @btime intersect!($hb,$hb2)
 print("Set:")
 @btime intersect!($c,$d)
@@ -63,6 +71,14 @@ print("BitSet:")
 
 println("--- Set Union ---")
 print("HiBitSet:")
+@btime union($hb, $hb2)
+print("Set:")
+@btime union($c, $d)
+print("BitSet:")
+@btime union($a, $b)
+
+println("--- Set Union in-place ---")
+print("HiBitSet:")
 @btime union!($hb, $hb2)
 print("Set:")
 @btime union!($c, $d)
@@ -70,6 +86,14 @@ print("BitSet:")
 @btime union!($a, $b)
 
 println("--- Set Difference ---")
+print("HiBitSet:")
+@btime setdiff($hb, $hb2)
+print("Set:")
+@btime setdiff($c, $d)
+print("BitSet:")
+@btime setdiff($a, $b)
+
+println("--- Set Difference in-place ---")
 print("HiBitSet:")
 @btime setdiff!($hb, $hb2)
 print("Set:")
@@ -96,7 +120,7 @@ print("BitSet:")
 s = 0
 println("--- Set Iteration ---")
 print("HiBitSet:")
-@btime @inbounds for e in $hb2
+@btime for e in $hb2
 	$s += e
 end
 print("Set:")

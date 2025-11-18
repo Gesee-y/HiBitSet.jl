@@ -10,7 +10,7 @@ Base.@propagate_inbounds function Base.iterate(hb::HiBitSet{T}, state=(0,1)) whe
             gap = trailing_zeros(bits)
             next_bitpos = bitpos + gap + 1
             cond = next_bitpos < usize
-            next_state = (next_bitpos*cond, bitset+cond)
+            next_state = (next_bitpos*cond, bitset + !cond)
             return ((bitset-1)*usize + bitpos + gap, next_state)
         end
 
