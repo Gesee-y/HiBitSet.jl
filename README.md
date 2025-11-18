@@ -1,7 +1,6 @@
 # HiBitSet.jl
 
 [![Coverage Status](https://coveralls.io/repos/github/Gesee-y/HiBitSets.jl/badge.svg)](https://coveralls.io/github/Gesee-y/HiBitSets.jl)
-![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)]()
 
 [Hierarchical Bitset](https://github.com/amethyst/hibitset) HiBitSet is a hierarchical bitset inspired by the structure used in the ECS ecosystem, particularly in Amethyst’s hibitset.
