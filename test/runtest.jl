@@ -91,9 +91,8 @@ end
 end
 
 @testset "HiBitSet – Iteration" begin
-    A = sort(unique(rand(1:100-1, 50)))
-    hb = HiBitSet(A, 100)
-    println(hb)
+    A = sort(unique(rand(1:1000-1, 50)))
+    hb = HiBitSet(A, 1000)
     @test sort(collect(hb)) == A
 
     empty = HiBitSet(1000)
@@ -116,11 +115,11 @@ end
 @testset "HiBitSet – Stress & Randomized" begin
     for _ in 1:200
         cap = 1000
-        A = unique(rand(1:cap, rand(1:50)))
-        B = unique(rand(1:cap, rand(1:50)))
+        A = unique(rand(1:cap-1, rand(1:50)))
+        B = unique(rand(1:cap-1, rand(1:50)))
 
-        hbA = hset(A, cap)
-        hbB = hset(B, cap)
+        hbA = HiBitSet(A, cap)
+        hbB = HiBitSet(B, cap)
         out = HiBitSet(cap)
 
         # intersection
@@ -129,10 +128,10 @@ end
 
         # union
         union!(out, hbA, hbB)
-        @test sort(collect(out)) == sort(union(Set(A), Set(B)))
+        @test sort(collect(out)) == sort(collect(union(Set(A), Set(B))))
 
         # difference
-        difference!(out, hbA, hbB)
-        @test sort(collect(out)) == sort(setdiff(Set(A), Set(B)))
+        setdiff!(out, hbA, hbB)
+        @test sort(collect(out)) == sort(collect(setdiff(Set(A), Set(B))))
     end
 end

@@ -1,24 +1,26 @@
 Base.@propagate_inbounds function Base.iterate(hb::HiBitSet{T}, state=(0,1)) where T
-    
-    layer::Vector{T} = hb.layers[begin]
+    layer = hb.layers[1]
     bitpos, bitset = state
-    bitset > length(layer) && return nothing
-    
-    bits = layer[bitset] >> bitpos
-    usize = sizeof(T)*8
+    usize = sizeof(T) * 8
 
-    while bitset <= length(layer) && iszero(bits)
-    	bits = layer[bitset] >> bitpos
-    	bitset += 1
-    	bitpos = 0
+    while bitset <= length(layer)
+        bits = layer[bitset] >> bitpos
+
+        if bits != 0
+            gap = trailing_zeros(bits)
+            next_bitpos = bitpos + gap + 1
+            cond = next_bitpos < usize
+            next_state = (next_bitpos*cond, bitset+cond)
+            return ((bitset-1)*usize + bitpos + gap, next_state)
+        end
+
+        bitset += 1
+        bitpos = 0
     end
 
-    bitset > length(layer) && return nothing
-    bits = layer[bitset] >> bitpos
-
-    gap = trailing_zeros(bits)
-    return ((bitset-1)*usize + bitpos+gap, (bitpos+gap+1, bitset))
+    return nothing
 end
+
 
 function Base.collect(hb::HiBitSet)
 	res = Int[]

@@ -95,18 +95,30 @@ function Base.maximum(hb::HiBitSet{T}) where T
         bits = layer[i]
         iszero(bits) && continue
 
-        bpos = 1
-        while !iszero(bits)
-            npos = trailing_zeros(bits)
-            bits >>= bpos + npos
-            bpos += npos
-        end
+        bpos = usize - leading_zeros(bits)
+
+        return (i-1)*usize + bpos-1
+    end
+
+    return 0
+end
+
+function Base.minimum(hb::HiBitSet{T}) where T
+    layer = hb.layers[begin]
+    usize = sizeof(T)*8
+    L = length(layer)
+
+    @inbounds for i in 1:L
+        bits = layer[i]
+        iszero(bits) && continue
+
+        bpos = trailing_zeros(bits)
 
         return (i-1)*usize + bpos
     end
 
     return 0
-end 
+end
 
 # Efficient intersection that returns a vector of indices present in both sets
 # We scan top-down: find matching words at top, then descend to find matching bits.
