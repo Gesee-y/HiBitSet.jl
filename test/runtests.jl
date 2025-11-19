@@ -1,4 +1,5 @@
-using HiBitSets
+include("..\\src\\HiBitSets.jl")
+using .HiBitSets
 using Test
 
 @testset "HiBitSet – Construction" begin
@@ -27,6 +28,17 @@ end
     end
     @test !(1 in hb)
     @test !(98 in hb)
+end
+
+@testset "HiBitSet – Empty" begin
+    vals = [3, 7, 50, 99]
+    hb = HiBitSet(vals, 100)
+    
+    @test !isempty(hb)
+
+    empty!(hb)
+
+    @test isempty(hb)
 end
 
 @testset "HiBitSet – Intersection" begin

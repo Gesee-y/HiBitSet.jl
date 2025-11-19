@@ -315,6 +315,7 @@ function Base.empty!(hb::HiBitSet)
         layer .= 0
     end
 end
+Base.isempty(hb::HiBitSet) = all(==(0), hb.layers[begin])
 
 function Base.copy(hb::HiBitSet{T}) where T
     nhb = HiBitSet{T}(hb.capacity)
