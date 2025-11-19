@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)]()
 
 [Hierarchical Bitset](https://github.com/amethyst/hibitset) HiBitSet is a hierarchical bitset inspired by the structure used in the ECS ecosystem, particularly in Amethyst’s hibitset.
-It implements a multi-layer bitset that accelerates set operations by skipping empty regions efficiently.
+It implements a multi-layer bitset that accelerates set operations by skipping empty regions efficiently. They can only store positive integers.
 
 
 ---
@@ -46,7 +46,6 @@ Not ideal for:
 - Iteration-heavy workloads
 
 - Frequent deep copies
-
 
 
 ---
