@@ -14,11 +14,28 @@ end
     return (layers[lvl][widx] >> bitpos) & one(T)
 end
 
-# add an index to the set
+"""
+Add the element `x` to the HiBitSet `hb`.
+If the element is already present, nothing will happens.
+The value `x` should be less than the capacity of the HiBitSet `hb` and non negative.
+
+## Example
+
+```julia
+
+julia> a = HiBitSet(100)
+
+julia> push!(a, 2) # fine
+
+julia> push!(a, -1) # not possible
+
+julia> push!(a, 100) # not possible, should be less than the capacity
+```
+"""
 function Base.push!(hb::HiBitSet{T}, x::Integer) where T
     @assert 0 <= x < hb.capacity "index out of bounds"
     usize = sizeof(T)*8
-    word_idx = x ÷ usize + 1       # 1-based word index
+    word_idx = x ÷ usize + 1
     bitpos = x % usize
 
     # if already present, still fine (idempotent)
@@ -34,6 +51,13 @@ function Base.push!(hb::HiBitSet{T}, x::Integer) where T
     end
     return hb
 end
+
+"""
+Remove an element from `x` from the HiBitSet `hb`.
+If the element is not there, nothing will happens.
+
+`x` should be in the range 0 <= `x` < `hb.capacity`.
+"""
 function Base.delete!(hb::HiBitSet{T}, x::Integer) where T
     @assert 0 <= x < hb.capacity "index out of bounds"
     usize = sizeof(T)*8
@@ -53,7 +77,9 @@ function Base.delete!(hb::HiBitSet{T}, x::Integer) where T
     return hb
 end
 
-# check membership
+"""
+Returns true if the set `hb` contains the elemet `x`, false otherwise. 
+"""
 function Base.in(x::Integer, hb::HiBitSet{T}) where T
     0 <= x < hb.capacity || return false
     usize = sizeof(T)*8
@@ -61,8 +87,14 @@ function Base.in(x::Integer, hb::HiBitSet{T}) where T
     bitpos = x % usize
     return !iszero(_get_bit(hb.layers, 1, word_idx, bitpos))
 end
+
+"""
+Returns true if `hbA` is a subset of `hbB`.
+It's the same as calling `issubset(hbA, hbB)`.
+
+Ideally, hbA and hbB should be of the same capacity to make this safe.
+"""
 function Base.in(hbA::HiBitSet, hbB::HiBitSet)
-    # intersect hbA & hbB et comparer chaque couche
     @inbounds for lvl in 1:length(hbA.layers)
         L = length(hbA.layers[lvl])
         for i in 1:L
@@ -73,8 +105,16 @@ function Base.in(hbA::HiBitSet, hbB::HiBitSet)
     end
     return true
 end
+
+"""
+Returns true if `hbA` is a subset of `hbB`.
+It's the same as calling `hbA in hbB`.
+"""
 Base.issubset(hbA::HiBitSet, hbB::HiBitSet) = (hbA in hbB)
 
+"""
+Returns how many active elements are contained in the HiBitSet `hb`. Length is not the same as the capacity, which is the maximum element the set can have.
+"""
 function Base.length(hb::HiBitSet{T}) where T
     layer = hb.layers[begin]
     res = 0
@@ -86,6 +126,9 @@ function Base.length(hb::HiBitSet{T}) where T
     return res
 end 
 
+"""
+Returns the maximum active value contained in tge HiBitSet `hb`.
+"""
 function Base.maximum(hb::HiBitSet{T}) where T
     layer = hb.layers[begin]
     usize = sizeof(T)*8
@@ -103,6 +146,9 @@ function Base.maximum(hb::HiBitSet{T}) where T
     return 0
 end
 
+"""
+Returns the minimum value contained the HiBitSet `hb`.
+"""
 function Base.minimum(hb::HiBitSet{T}) where T
     layer = hb.layers[begin]
     usize = sizeof(T)*8
@@ -122,6 +168,9 @@ end
 
 # Efficient intersection that returns a vector of indices present in both sets
 # We scan top-down: find matching words at top, then descend to find matching bits.
+"""
+Compute tge intersection of 2 HiBitSets and returns the result as a vector.
+"""
 function intersect_to_vector(hb1::HiBitSet{T}, hb2::HiBitSet{T}) where T
     @assert hb1.capacity == hb2.capacity "capacities must match"
     L = length(hb1.layers)
@@ -150,16 +199,15 @@ function intersect_to_vector(hb1::HiBitSet{T}, hb2::HiBitSet{T}) where T
 
         if lvl == 1
             # convert each 1 bit in mask to absolute index
-            base = (widx - 1) * WORD_BITS
-            while mask != 0
-                tz = trailing_zeros(mask)
-                push!(result, base + tz)
-                mask &= mask - 1  # clear lowest set bit
+            base = (widx - 1) * usize
+            tz = trailing_zeros(mask)
+            push!(result, base + tz)
+            mask &= mask - 1  # clear lowest set bit
             end
         else
             # descend: each bit set in mask corresponds to a word index in the lower level
-            # For each set bit at position b, the child word index is (widx-1)*WORD_BITS + b + 1
-            base_child = (widx - 1) * WORD_BITS
+            # For each set bit at position b, the child word index is (widx-1)*usize + b + 1
+            base_child = (widx - 1) * usize
             # iterate set bits
             m = mask
             while m != 0
