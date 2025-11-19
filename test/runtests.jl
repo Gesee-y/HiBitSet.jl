@@ -1,5 +1,4 @@
-include("..\\src\\HiBitSets.jl")
-using .HiBitSets
+using HiBitSets
 using Test
 
 @testset "HiBitSet – Construction" begin
